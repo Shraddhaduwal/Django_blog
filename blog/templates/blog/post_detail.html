@@ -1,0 +1,40 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="container">
+        <div class="jumbotron">
+            <div class="media-body">
+                <a href="{% url 'user-posts' object.author.username %}"><img class="rounded-circle article-img"  src="{{ object.author.profile.image.url }}"></a>
+                <div class="article-metadata">
+                    <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
+                    <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
+                    {% if object.author == user %}
+                        <div>
+                            <a class="btn btn-primary" href="{% url 'post-update' object.id %}">Update</a>
+                            <a class="btn btn-danger" href="{% url 'post-delete' object.id %}">Delete</a>
+                        </div>
+                    {% endif %}
+                </div>
+                <h2>{{ object.title }}</h2>
+                <p class="lead">{{ object.content }}</p>
+            </div>
+            <hr>
+            <br><br>
+            {% if user.is_authenticated %}
+                <form method="POST" action="{% url 'like-post' object.pk %}">
+                    {% csrf_token %}
+                    {% if liked %}
+                        <button class="btn btn-danger btn-sm" type="submit" value="{{ object.id }}" name="post_id">
+                            Unlike
+                        </button>
+                    {% else %}
+                        <button class="btn btn-primary btn-sm" type="submit" value="{{ object.id }}" name="post_id">
+                            Like
+                        </button>
+                    {% endif %}
+                    {{ total_likes }} Likes
+                </form>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}kwargs
